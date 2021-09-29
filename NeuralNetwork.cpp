@@ -125,24 +125,18 @@ NeuralNetwork NeuralNetwork::createModel(vector<queue<LayerNode>> Layers, int in
 LayerNode LayerNode::get_node(LayerNode root, int BranchNumber, int TreeDepth)
 {
     LayerNode my_node = root;
-    while(my_node.child.size() != 0)
-    {
-        if(my_node.BranchNumber == BranchNumber && my_node.TreeDepth == TreeDepth)
-            return my_node;
-        
-        //bool contains_my_number = false;
-        int branch_id = 0;
-        
-        for(int i = 0; i < my_node.child.size(); i++)
-            if(my_node.child[i].BranchNumber == BranchNumber)
-            {
-                //contains_my_number = true;
-                branch_id = i;
-            }
 
-        my_node = my_node.child[branch_id];
+    if(my_node.BranchNumber == BranchNumber && my_node.TreeDepth == TreeDepth)
+        return my_node;
+        
+        
+    for(int i = 0; i < my_node.child.size(); i++)
+        if(my_node.child[i].BranchNumber == BranchNumber)
+        {
+            return get_node(my_node.child[i], BranchNumber, TreeDepth);
+        }
 
-    }
+    
     throw(std::invalid_argument("No such Node found in the tree"));
 }
 
@@ -500,8 +494,11 @@ void NeuralNetwork::gradient_descent(int batch_size, double learning_rate, Matri
     }
 }
 
-void NeuralNetwork::fit(Matrix X, vector<Matrix> Y)
+void NeuralNetwork::fit(Matrix X, vector<Matrix> Y, int epoch_number)
 {
-    gradient_descent(this->batch_size, this->learning_rate, X, Y);
+    for(int i = 0; i < epoch_number; i++){
+        cout << "Epoch " << i;
+        gradient_descent(this->batch_size, this->learning_rate, X, Y);
+    }
     
 }
