@@ -63,7 +63,7 @@ private:
     
 public:    
     static NeuralNetwork createModel(vector<queue<LayerNode>> Layers, int input_size, int batch_size, double learning_rate=0.01, string optimizer="gradient_descent");
-    void fit(Matrix X, vector<Matrix> Y);
+    void fit(Matrix X, vector<Matrix> Y, int epoch_number);
     Matrix predict(Matrix X, int BranchNumber=0);
     void export_model();
 };
