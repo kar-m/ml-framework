@@ -41,21 +41,30 @@ class NeuralNetwork
 {
 private:
     NeuralNetwork(vector<queue<LayerNode>> Layers, int input_size, int batch_size, double learning_rate=0.01, string optimizer="gradient_descent");
+    int batch_size;
+    double learning_rate;
+    string optimizer;
     LayerNode tree_root;
     vector<LayerNode> tree_leafs;
-    Matrix gradient;
-    Matrix flattened_weights;
+    vector<Matrix> gradients;
+    vector<Matrix> flattened_weights;
     static void get_leafs(vector<LayerNode> &knownLeafs, LayerNode node);
     Matrix calculate_gradient_hidden(int BranchNumber, int TreeDepth);
     Matrix calculate_gradient_loss(int BranchNumber);
-    Matrix calculate_input_loss(int BranchNumber);
+    Matrix calculate_gradient_input(int BranchNumber);
+    Matrix calculate_gradient(int BranchNumber);
+    void calculate_gradient_shapes();
     Matrix get_flattened_weights();
-    void update_weights(Matrix flat_weights);
+    Matrix stochastic_gradient(int BranchNumber, Matrix x, vector<Matrix> y);
+    Matrix mini_batch_gradient(int BranchNumber, Matrix X, vector<Matrix> Y);
+    void update_inputs(Matrix x, vector<Matrix> y, LayerNode child);
+    void update_weights(Matrix flat_change, int BranchNumber);
+    void gradient_descent(int batch_size, double learning_rate, Matrix X, vector<Matrix> Y);
     
 public:    
-    NeuralNetwork createModel(vector<queue<LayerNode>> Layers, int input_size, int batch_size, double learning_rate=0.01, string optimizer="gradient_descent");
-    void fit(Matrix x, Matrix y);
-    void predict(Matrix x, int branch=0);
+    static NeuralNetwork createModel(vector<queue<LayerNode>> Layers, int input_size, int batch_size, double learning_rate=0.01, string optimizer="gradient_descent");
+    void fit(Matrix X, vector<Matrix> Y);
+    Matrix predict(Matrix X, int BranchNumber=0);
     void export_model();
 };
 
